@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart'; // Import the Login Page
+import 'accountverification_screen.dart'; // Import the Account Verification Screen
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,49 +14,46 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   bool termsAccepted = false;
 
-  // Function to handle the register logic
+  // Function to handle registration logic
   void handleRegister() {
     if (!termsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please accept the terms and conditions."),
-        ),
+        const SnackBar(content: Text("Please accept the terms and conditions.")),
       );
     } else if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Passwords do not match."),
-        ),
+        const SnackBar(content: Text("Passwords do not match.")),
+      );
+    } else if (phoneController.text.isEmpty || passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("All fields are required.")),
       );
     } else {
-      // Simulate registration logic (replace with backend calls in the future)
+      // Simulate registration logic
       print("User Registered:");
       print("First Name: ${firstNameController.text}");
       print("Last Name: ${lastNameController.text}");
       print("Phone: ${phoneController.text}");
       print("Password: ${passwordController.text}");
 
-      // Show a confirmation pop-up
+      // Show confirmation popup and navigate to Account Verification
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Registration Successful'),
-            content: const Text('You have been registered successfully!'),
+            content: const Text('A verification code has been sent to your phone.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const LoginPage()), // Navigate to LoginPage
+                    MaterialPageRoute(builder: (context) => const AccountVerificationScreen()), // Navigate to Verification Page
                   );
                 },
                 child: const Text('OK'),
@@ -71,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF111111), // Dark background
+      backgroundColor: const Color(0xFF111111),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -194,10 +191,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF80CBC4), // Button color
+                      backgroundColor: const Color(0xFF80CBC4),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(30), // Rounded corners
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 15),
                     ),

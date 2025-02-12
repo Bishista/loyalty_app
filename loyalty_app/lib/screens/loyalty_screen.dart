@@ -1,33 +1,49 @@
 import 'package:flutter/material.dart';
+import 'restaurant_screen.dart'; // Import Restaurant Screen
+import 'profile_screen.dart'; // Import Profile Screen
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class LoyaltyProgramsPage extends StatefulWidget {
+  const LoyaltyProgramsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoyaltyProgramsPage(),
-    );
-  }
+  _LoyaltyProgramsPageState createState() => _LoyaltyProgramsPageState();
 }
 
-class LoyaltyProgramsPage extends StatelessWidget {
-  
+class _LoyaltyProgramsPageState extends State<LoyaltyProgramsPage> {
+  // Function to handle bottom navigation
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      // Stay on LoyaltyProgramsPage (Home)
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoyaltyProgramsPage()),
+      );
+    } else if (index == 2) {
+      print("Scan button tapped");
+      // Implement QR scan functionality here in the future
+    } else if (index == 3) {
+      // Navigate to Restaurant Screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const RestaurantScreen()),
+      );
+    } else if (index == 4) {
+      // Navigate to Profile Screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+      );
+    } else {
+      print("Navigation item $index tapped");
+    }
+  }
+
   static const List<String> foodImages = [
     'assets/images/meat-dish.jpg',
     'assets/images/soup.jpg',
     'assets/images/fried-potato.jpg',
     'assets/images/thai-food.jpg',
   ];
-
-  
-  const LoyaltyProgramsPage({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,21 +112,43 @@ class LoyaltyProgramsPage extends StatelessWidget {
           ),
         ],
       ),
+
+      // Bottom Navigation Bar with Fixed Icons
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
+        currentIndex: 0, // Set active tab to Home (Loyalty Screen)
+        onTap: _onItemTapped,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black54,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home, size: 30), label: ""),
+        items: [
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.home, size: 30), // Home Icon
+            label: "",
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.local_cafe, size: 30),
+            label: "",
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.local_cafe, size: 30), label: ""),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.restaurant_menu, size: 30), label: ""),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person, size: 30), label: ""),
+            icon: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 28),
+            ),
+            label: "",
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant_menu, size: 30), // Fork & Spoon Icon
+            label: "",
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.person, size: 30), // Profile Icon
+            label: "",
+          ),
         ],
       ),
     );

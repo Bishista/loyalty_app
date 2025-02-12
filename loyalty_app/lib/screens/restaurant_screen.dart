@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'loyalty_screen.dart'; // Import the Loyalty Screen
+import 'loyalty_screen.dart';
+import 'profile_screen.dart';
 
 class RestaurantScreen extends StatefulWidget {
   const RestaurantScreen({super.key});
@@ -9,116 +10,132 @@ class RestaurantScreen extends StatefulWidget {
 }
 
 class _RestaurantScreenState extends State<RestaurantScreen> {
-  int _selectedIndex = 2; // Set initial index for navigation
-
-  // Function to handle navigation
   void _onItemTapped(int index) {
     if (index == 0) {
-      // Navigate to Loyalty Screen (Home Icon Clicked)
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoyaltyProgramsPage()),
       );
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
+    } else if (index == 2) {
+      print("Scan button tapped");
+    } else if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const RestaurantScreen()),
+      );
+    } else if (index == 4) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+      );
     }
   }
+
+  static const List<String> restaurantImages = [
+    'assets/images/res6.jpg',
+    'assets/images/res2.jpg',
+    'assets/images/res3.jpg',
+    'assets/images/res4.jpg',
+    'assets/images/res5.jpg',
+    'assets/images/res6.jpg',
+  ];
+
+  static const List<String> categories = [
+    "Pasta",
+    "Salad",
+    "Dessert",
+    "Drinks",
+    "Momo",
+    "Pizza",
+    "Burger",
+    "Sushi",
+    "Tacos",
+    "Steak"
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // White background
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Back Button
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, size: 30),
-                onPressed: () {
-                  Navigator.pop(context); // Go back
-                },
+      backgroundColor: Colors.white,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 20),
+
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: "Search Restaurants",
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                filled: true,
+                fillColor: Colors.grey[300],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
+          ),
 
-            // Search Bar
-            Padding(
+          // Category Filter Buttons (Now Wraps to Next Line)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+            child: Wrap(
+              spacing: 8.0, // Space between buttons horizontally
+              runSpacing: 8.0, // Space between buttons vertically
+              children: categories.map((category) {
+                return _buildCategoryButton(category);
+              }).toList(),
+            ),
+          ),
+
+          // Restaurant Grid
+          Expanded(
+            child: GridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Search Restaurants",
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.grey[300],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // 2 Columns
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: restaurantImages.length,
+              itemBuilder: (context, index) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(20), // Rounded images
+                  child: Image.asset(
+                    restaurantImages[index],
+                    fit: BoxFit.cover,
                   ),
-                ),
-              ),
+                );
+              },
             ),
-
-            const SizedBox(height: 10),
-
-            // Category Filter Buttons
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildCategoryButton("Pasta"),
-                  _buildCategoryButton("Salad"),
-                  _buildCategoryButton("Dessert"),
-                  _buildCategoryButton("Drinks"),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            // Restaurant Grid
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 columns
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: restaurantImages.length,
-                itemBuilder: (context, index) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.asset(
-                      restaurantImages[index],
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
 
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: 3,
         onTap: _onItemTapped,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black54,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        items: [
+          const BottomNavigationBarItem(icon: Icon(Icons.home, size: 30), label: ""),
+          const BottomNavigationBarItem(icon: Icon(Icons.local_cafe, size: 30), label: ""),
           BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag), label: "Orders"),
-          BottomNavigationBarItem(icon: Icon(Icons.local_cafe), label: "Cafe"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+            icon: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
+              child: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 28),
+            ),
+            label: "",
+          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.restaurant_menu, size: 30), label: ""),
+          const BottomNavigationBarItem(icon: Icon(Icons.person, size: 30), label: ""),
         ],
       ),
     );
@@ -139,13 +156,3 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
     );
   }
 }
-
-// Updated List of restaurant images
-List<String> restaurantImages = [
-  'assets/images/reslogo1.jpg',
-  'assets/images/reslogo2.jpg',
-  'assets/images/reslogo3.jpg',
-  'assets/images/reslogo4.jpg',
-  'assets/images/reslogo5.jpg',
-  'assets/images/reslogo6.jpg',
-];
