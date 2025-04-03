@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'stamp_screen.dart'; // Import StampScreen
 import 'restaurant_screen.dart'; // Import Restaurant Screen
 import 'profile_screen.dart'; // Import Profile Screen
+import 'myrewards_screen.dart'; // ✅ Import MyRewardsScreen
 
 class LoyaltyProgramsPage extends StatefulWidget {
   const LoyaltyProgramsPage({super.key});
@@ -17,6 +21,12 @@ class _LoyaltyProgramsPageState extends State<LoyaltyProgramsPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoyaltyProgramsPage()),
+      );
+    } else if (index == 1) {
+      // ✅ Navigate to MyRewardsScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MyRewardsScreen()),
       );
     } else if (index == 2) {
       print("Scan button tapped");

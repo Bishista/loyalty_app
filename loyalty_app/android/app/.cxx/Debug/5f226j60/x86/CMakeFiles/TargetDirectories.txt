@@ -1,0 +1,2 @@
+C:/AppDev/loyalty_app/loyalty_app/android/app/.cxx/Debug/5f226j60/x86/CMakeFiles/edit_cache.dir
+C:/AppDev/loyalty_app/loyalty_app/android/app/.cxx/Debug/5f226j60/x86/CMakeFiles/rebuild_cache.dir

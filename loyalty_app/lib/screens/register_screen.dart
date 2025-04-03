@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'accountverification_screen.dart'; // Import the Account Verification Screen
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'login_screen.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -9,58 +12,60 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // Controllers for text input fields
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
   bool termsAccepted = false;
+  bool isLoading = false;
 
-  // Function to handle registration logic
-  void handleRegister() {
+  Future<void> registerUser() async {
     if (!termsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please accept the terms and conditions.")),
       );
-    } else if (passwordController.text != confirmPasswordController.text) {
+      return;
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Passwords do not match.")),
       );
-    } else if (phoneController.text.isEmpty || passwordController.text.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final response = await http.post(
+      Uri.parse('https://yourapi.com/api/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'username': usernameController.text,
+        'email': emailController.text,
+        'phone': phoneController.text,
+        'password': passwordController.text,
+      }),
+    );
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (response.statusCode == 201) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("All fields are required.")),
+        const SnackBar(content: Text("Registration successful!"), backgroundColor: Colors.green),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     } else {
-      // Simulate registration logic
-      print("User Registered:");
-      print("First Name: ${firstNameController.text}");
-      print("Last Name: ${lastNameController.text}");
-      print("Phone: ${phoneController.text}");
-      print("Password: ${passwordController.text}");
-
-      // Show confirmation popup and navigate to Account Verification
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Registration Successful'),
-            content: const Text('A verification code has been sent to your phone.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AccountVerificationScreen()), // Navigate to Verification Page
-                  );
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registration failed: ${response.body}")),
       );
     }
   }
@@ -81,96 +86,18 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Title
-                const Text(
-                  'Register',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
+                const Text('Register', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
                 const SizedBox(height: 20),
-
-                // First Name Input
-                TextField(
-                  controller: firstNameController,
-                  decoration: InputDecoration(
-                    hintText: 'First Name',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
+                TextField(controller: usernameController, decoration: const InputDecoration(hintText: 'Username')),
                 const SizedBox(height: 15),
-
-                // Last Name Input
-                TextField(
-                  controller: lastNameController,
-                  decoration: InputDecoration(
-                    hintText: 'Last Name',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
+                TextField(controller: emailController, decoration: const InputDecoration(hintText: 'Email')),
                 const SizedBox(height: 15),
-
-                // Phone Number Input
-                TextField(
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    hintText: 'Phone Number',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
+                TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: const InputDecoration(hintText: 'Phone Number')),
                 const SizedBox(height: 15),
-
-                // Password Input
-                TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
+                TextField(controller: passwordController, obscureText: true, decoration: const InputDecoration(hintText: 'Password')),
                 const SizedBox(height: 15),
-
-                // Confirm Password Input
-                TextField(
-                  controller: confirmPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Confirm Password',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
+                TextField(controller: confirmPasswordController, obscureText: true, decoration: const InputDecoration(hintText: 'Confirm Password')),
                 const SizedBox(height: 15),
-
-                // Terms and Conditions Checkbox
                 Row(
                   children: [
                     Checkbox(
@@ -185,28 +112,16 @@ class _RegisterPageState extends State<RegisterPage> {
                   ],
                 ),
                 const SizedBox(height: 20),
-
-                // Register Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF80CBC4),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                isLoading
+                    ? const CircularProgressIndicator()
+                    : SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF80CBC4)),
+                          onPressed: registerUser,
+                          child: const Text('Register', style: TextStyle(fontSize: 18, color: Colors.black)),
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                    ),
-                    onPressed: handleRegister,
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

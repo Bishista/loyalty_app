@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'loyalty_screen.dart'; // Import LoyaltyProgramsPage
-import 'register_screen.dart'; // Import RegisterPage
+import 'loyalty_screen.dart';
+import 'register_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,39 +12,37 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool rememberMe = false;
+  bool isLoading = false;
 
-  final String correctPhone = "1234567890"; // Dummy phone
-  final String correctPassword = "password123"; // Dummy password
-
+  // Local hardcoded login check
   void handleLogin() {
-    String enteredPhone = phoneController.text;
-    String enteredPassword = passwordController.text;
+    setState(() {
+      isLoading = true;
+    });
 
-    if (enteredPhone == correctPhone && enteredPassword == correctPassword) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoyaltyProgramsPage()),
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Login Failed"),
-            content: const Text("Invalid phone number or password."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-    }
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false;
+      });
+
+      final phone = phoneController.text.trim();
+      final password = passwordController.text.trim();
+
+      if (phone == '987654321' && password == 'Gita@12!') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login Successful!")),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoyaltyProgramsPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Invalid phone number or password")),
+        );
+      }
+    });
   }
 
   @override
@@ -78,11 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   const Text(
                     'Login',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                   const SizedBox(height: 20),
                   TextField(
@@ -113,75 +107,34 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: rememberMe,
-                            onChanged: (value) {
-                              setState(() {
-                                rememberMe = value ?? false;
-                              });
-                            },
-                          ),
-                          const Text(
-                            'Remember me',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ],
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          print("Forgot Password Clicked!");
-                        },
-                        child: const Text(
-                          'Forgot password?',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
+                  isLoading
+                      ? const CircularProgressIndicator()
+                      : SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF80CBC4),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                            ),
+                            onPressed: handleLogin,
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(fontSize: 18, color: Colors.black),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF80CBC4),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                      ),
-                      onPressed: handleLogin,
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterPage()),
+                        MaterialPageRoute(builder: (context) => const RegisterPage()),
                       );
                     },
                     child: const Text(
                       'or Login/Register with',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.black87),
                     ),
                   ),
                 ],

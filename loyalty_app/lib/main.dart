@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart'; // Import the Login Screen
+import 'screens/login_screen.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +23,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF111111), // Dark background
+      backgroundColor: const Color(0xFF111111),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
